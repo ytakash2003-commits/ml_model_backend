@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EEG Fatigue ML Inference</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f172a;
+            color: white;
+            text-align: center;
+            padding-top: 40px;
+        }
+        input {
+            padding: 8px;
+            margin: 6px;
+            width: 180px;
+            font-size: 14px;
+        }
+        button {
+            padding: 10px 30px;
+            margin-top: 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 25px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>EEG Fatigue Detection – ML Test Page</h2>
+
+<p>Enter EEG RMS values</p>
+
+<input type="number" id="alpha" placeholder="Alpha RMS" step="any"><br>
+<input type="number" id="beta" placeholder="Beta RMS" step="any"><br>
+<input type="number" id="gamma" placeholder="Gamma RMS" step="any"><br>
+<input type="number" id="delta" placeholder="Delta RMS" step="any"><br>
+
+<button onclick="predict()">Predict Fatigue</button>
+
+<div id="result"></div>
+
+<script>
+    // 🔴 CHANGE THIS TO YOUR RENDER BACKEND URL
+    const API_URL = "https://YOUR-BACKEND.onrender.com/fatigue";
+
+    function predict() {
+        const data = {
+            alpha_rms: parseFloat(document.getElementById("alpha").value),
+            beta_rms: parseFloat(document.getElementById("beta").value),
+            gamma_rms: parseFloat(document.getElementById("gamma").value),
+            delta_rms: parseFloat(document.getElementById("delta").value)
+        };
+
+        fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            const labels = [
+                "ACTIVE",
+                "INITIAL DROWSINESS",
+                "HEAVY DROWSINESS",
+                "UNCONSCIOUS"
+            ];
+            document.getElementById("result").innerText =
+                "Predicted Fatigue Level: " + labels[result.prediction];
+        })
+        .catch(error => {
+            document.getElementById("result").innerText =
+                "Error: Unable to connect to ML backend";
+        });
+    }
+</script>
+
+</body>
+</html>

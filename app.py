@@ -7,7 +7,7 @@ model = joblib.load("fatigue_model.pkl")
 scaler = joblib.load("scaler.pkl")
 latest_data = {}
 
-@app.post("/fatigue")
+@app.post("/eeg")
 def fatigue(data: dict):
   global latest_data
   x = [[data['alpha_rms'], data['beta_rms'], data['gamma_rms'], data['delta_rms']]]
@@ -22,6 +22,7 @@ def fatigue(data: dict):
       "prediction": fatigue_prediction
   }
   return {"status": "ok", "prediction": fatigue_prediction}
-@app.get("/latest_data")
+@app.get("/latest")
 def get_latest_data():
     return latest_data
+
